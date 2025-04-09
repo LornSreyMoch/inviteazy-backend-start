@@ -7,8 +7,6 @@ export interface IEvent{
     event_description: string;
     created_at?:Date;
     updated_at?:Date;
-
-
 }
 export type IEventCreate = Omit<IEvent, "id" | "created_at" | "updated_at">;
 

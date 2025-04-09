@@ -77,14 +77,24 @@ export const validateIdInURLParam = (
     next(error);
   }
 };
+const eventSchema=z.object({
+  user: z.string().uuid(),  
+  name:z.string().min(1).max(50),
+  datetime: z.string().refine(val => !isNaN(Date.parse(val)), {
+    message: "Invalid date format"
+  }),  description: z.string().min(1).max(200),
+  location: z.string().min(1).max(100),
 
-export const validateInvitee = (
+})
+export const validateEvent = (
+  
   req: Request,
   res: Response,
   next: NextFunction
 ): void => {
   try {
-    InviteeSchema.parse(req.body);
+    eventSchema.parse(req.body);
+
     next();
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -94,3 +104,25 @@ export const validateInvitee = (
     next(error);
   }
 };
+
+
+export const validateInvitee = (
+
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void => {
+  try {
+
+    InviteeSchema.parse(req.body);
+
+    next();
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      res.status(400).json({ message: error.errors[0].message });
+      return;
+    }
+    next(error);
+  }
+};
+
