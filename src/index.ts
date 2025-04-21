@@ -41,7 +41,6 @@ const inviteeService = new InviteeService(inviteesRepository);
 const eventRepository = new PostgresEventRepository(pgPool);
 
 // Services
-const userService = new UserService(userRepository);
 const eventService = new EventService(eventRepository);
 
 // Controllers
@@ -66,5 +65,5 @@ app.use("/api/v1/events", eventRouter(eventController));
 app.use(errorMiddleware);
 
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${2}`);
+  console.log(`Server running at http://localhost:${port}`);
 });
