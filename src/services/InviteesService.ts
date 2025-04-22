@@ -38,4 +38,13 @@ export class InviteeService implements IInviteeService {
     delete(id: string): Promise<void> {
         return this.inviteeRepository.delete(id);
     }
+
+    async updateStatus(inviteeId: string, status: string): Promise<IInvitee> {
+        const validStatuses = ['accept', 'maybe', 'no', 'busy'];
+        if (!validStatuses.includes(status)) {
+            throw Object.assign(new Error('Invalid status value'), { status: 400 });
+        }
+
+        return await this.inviteeRepository.updateStatus(inviteeId, status);
+    }
 }

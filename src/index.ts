@@ -8,11 +8,13 @@ import { AuthController } from "./controllers/authController";
 import { InviteesController } from "./controllers/InviteesController";
 import authRoutes from "./routes/authRoutes";
 import { connectPostgresDb } from "./config/postgresdb/db";
+// import { Firebase } from "./config/firebase/db";
 import { PostgresUserRepository } from "./repositories/postgres/userRepository";
 import { InviteeService } from "./services/InviteesService";
 import { PostgresInviteesRepository } from "./repositories/postgres/InviteesRepository";
 import { loggingMiddleware } from "./middlewares/loggingMiddleware";
 import inviteesRoutes from "./routes/InviteesRoutes";
+import inviteFireRoutes from "./routes/Invite-fire-route";
 
 dotenv.config();
 
@@ -44,7 +46,9 @@ app.use(loggingMiddleware);
 // Routes
 app.use("/api/users", userRoutes(userController));
 app.use("/api/auth", authRoutes(authController));
-app.use("/api/invitees", inviteesRoutes(inviteesController));
+app.use("/api/v1", inviteesRoutes(inviteesController));
+
+// app.use("/api/invitees", inviteFireRoutes());
 
 // Handle Errors
 app.use(errorMiddleware);
