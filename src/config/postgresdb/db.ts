@@ -8,6 +8,7 @@ export const connectPostgresDb = (): Pool => {
     database: process.env.DB_NAME,
     password: process.env.DB_PASSWORD,
     port: parseInt(process.env.DB_PORT || "5435"),
+
   });
   return pool;
 };
