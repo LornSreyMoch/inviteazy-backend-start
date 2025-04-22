@@ -14,7 +14,7 @@ export function sanitizeRequestData(req: Request): Record<string, any> {
     const { username, password, email, ...safeBody } = req.body;
     safeData.body = safeBody;
     sensitiveFields.forEach((field) => {
-      if (req.body[field]) safeData.body[field] = "[MASKED]";
+      if (req.body[field]) safeData.body[field] = "*****";
     });
   }
 

@@ -19,6 +19,9 @@ import eventRouter from "./routes/eventRoutes"
 import {EventController} from "./controllers/eventController";
 import { EventService } from "./services/eventService";
 import { PostgresEventRepository } from "./repositories/postgres/eventRepository";
+import guestRouter from "./routes/guestInRoutes"
+import { GuestInsightController } from "./controllers/guestInsightController";
+
 
 dotenv.config();
 
@@ -47,6 +50,7 @@ const eventService = new EventService(eventRepository);
 const userController = new UserController(userService);
 const authController = new AuthController(userService);
 const inviteesController = new InviteesController(inviteeService);
+const guestInController= new GuestInsightController(inviteeService)
 
 const eventController= new EventController(eventService);
 
@@ -58,7 +62,7 @@ app.use(loggingMiddleware);
 app.use("/api/users", userRoutes(userController));
 app.use("/api/auth", authRoutes(authController));
 app.use("/api/invitees", inviteesRoutes(inviteesController));
-
+app.use("/api/v1/events", guestRouter(guestInController));
 app.use("/api/v1/events", eventRouter(eventController));
 
 // Handle Errors
