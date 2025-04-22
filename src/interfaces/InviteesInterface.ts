@@ -21,4 +21,5 @@ export interface IInviteeRepository {
     delete(id: string): Promise<void>;
 }
 
-export interface IInviteeService extends IInviteeRepository {}
+export interface IInviteeService extends IInviteeRepository {
+}

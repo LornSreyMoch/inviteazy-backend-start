@@ -6,6 +6,7 @@ import {
     validateIdInURLParam,
 } from '../middlewares/validationMiddleware';
 
+
 export default function inviteesRoutes(controller: InviteesController): Router {
     const router = Router();
 
@@ -17,3 +18,4 @@ export default function inviteesRoutes(controller: InviteesController): Router {
 
     return router;
 }
+
