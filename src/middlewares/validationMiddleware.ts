@@ -77,17 +77,16 @@ export const validateIdInURLParam = (
     next(error);
   }
 };
-const eventSchema=z.object({
-  user: z.string().uuid(),  
-  name:z.string().min(1).max(50),
+const eventSchema = z.object({
+  name: z.string().min(1).max(50),
   datetime: z.string().refine(val => !isNaN(Date.parse(val)), {
     message: "Invalid date format"
-  }),  description: z.string().min(1).max(200),
+  }), description: z.string().min(1).max(200),
   location: z.string().min(1).max(100),
 
 })
 export const validateEvent = (
-  
+
   req: Request,
   res: Response,
   next: NextFunction
