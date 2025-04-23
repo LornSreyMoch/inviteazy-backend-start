@@ -1,7 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import { IEventService } from "../interfaces/eventInterface";
 import redisCache from "../services/cacheService"
-
+interface AuthenticatedRequest extends Request {
+    user?: { id: string };
+  }
 export class EventController {
     private eventService: IEventService;
 
@@ -20,10 +22,13 @@ export class EventController {
         }
 
     }
-    async createNewEvent(eq: Request, res: Response, next: NextFunction) {
+    async createNewEvent(req:AuthenticatedRequest, res: Response, next: NextFunction) {
         try {
-            const { user, name, description, datetime, location } = eq.body;
-            const newEvent = await this.eventService.create({ user_id: user, event_name: name, event_datetime: datetime, event_location: location, event_description: description });
+            const user = req.user?.id;
+                console.log("don't have user",user)
+            
+            const {  name, description, datetime, location } = req.body;
+            const newEvent = await this.eventService.create({user_id:user , event_name: name, event_datetime: datetime, event_location: location, event_description: description });
             res.status(201).json({ message: "Created new Event successfully", newEvent });
             return;
         } catch (error) {

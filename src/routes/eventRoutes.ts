@@ -5,7 +5,7 @@ import { authMiddleware } from "../middlewares/authMiddleware";
 
 export default function eventRouter(controller: EventController): Router {
     const router = Router();
-    router.post("/create",validateEvent,authMiddleware,controller.createNewEvent.bind(controller))
+    router.post("/create",authMiddleware,validateEvent,controller.createNewEvent.bind(controller))
     router.get("/all", controller.getAllEvents.bind(controller))
     router.get("/:id", controller.getEventById.bind(controller))
     router.put("/:id", controller.updateEvent.bind(controller))
