@@ -4,7 +4,6 @@ npm-debug.log
 yarn-error.log
 package-lock.json  # Optional: include if you use yarn exclusively
 yarn.lock         # Optional: include if you use npm exclusively
-serviceAccountKey.json
 
 # TypeScript
 *.tsbuildinfo

@@ -17,6 +17,11 @@ import eventRouter from "./routes/eventRoutes";
 import { EventController } from "./controllers/eventController";
 import { EventService } from "./services/eventService";
 import { PostgresEventRepository } from "./repositories/postgres/eventRepository";
+import { MongoUserRepository } from "./repositories/mongodb/userRepository";
+import { connectMongoDB } from "./config/mongodb/db";
+import guestRouter from "./routes/guestInRoutes"
+import { GuestInsightController } from "./controllers/guestInsightController";
+
 
 dotenv.config();
 
@@ -36,11 +41,16 @@ const userService = new UserService(userRepository);
 const inviteeService = new InviteeService(inviteesRepository);
 const eventService = new EventService(eventRepository);
 
+
+// Services
+
 // Controllers
 const userController = new UserController(userService);
 const authController = new AuthController(userService);
 const inviteesController = new InviteesController(inviteeService);
-const eventController = new EventController(eventService);
+const guestInController= new GuestInsightController(inviteeService)
+
+const eventController= new EventController(eventService);
 
 // Middlewares
 app.use(express.json());
@@ -50,6 +60,7 @@ app.use(loggingMiddleware);
 app.use("/api/users", userRoutes(userController));
 app.use("/api/auth", authRoutes(authController));
 app.use("/api/v1", inviteesRoutes(inviteesController));
+app.use("/api/v1/events", guestRouter(guestInController));
 app.use("/api/v1/events", eventRouter(eventController));
 
 // Handle Errors

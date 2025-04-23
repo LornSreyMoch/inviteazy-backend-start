@@ -30,4 +30,5 @@ export interface IInviteeRepository {
     updateStatus(id: string, status: string): Promise<IInvitee>; 
 }
 
-export interface IInviteeService extends IInviteeRepository {}
+export interface IInviteeService extends IInviteeRepository {
+}
