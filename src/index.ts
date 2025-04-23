@@ -42,8 +42,6 @@ const inviteeService = new InviteeService(inviteesRepository);
 const eventService = new EventService(eventRepository);
 
 
-// Services
-
 // Controllers
 const userController = new UserController(userService);
 const authController = new AuthController(userService);

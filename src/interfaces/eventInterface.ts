@@ -8,10 +8,13 @@ export interface IEvent{
     created_at?:Date;
     updated_at?:Date;
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 
 =======
 >>>>>>> origin/main
+=======
+>>>>>>> main
 }
 export type IEventCreate = Omit<IEvent, "id" | "created_at" | "updated_at">;
 
