@@ -32,7 +32,12 @@ export class PostgresInviteesRepository implements IInviteeRepository {
 
     async create(invitee: IInviteeWithoutId): Promise<IInvitee> {
         const id = uuidv4();
-        const created_at = new Date();
+        const created_at = new Date();  
+        const status = invitee.status || 'pending'; // Default status if not provided
+        const qr_code = invitee.qr_code || `https://example.com/qr/${id}`; // Default QR code if not provided
+        const is_checked_in = invitee.is_checked_in ?? false; // Default to false if not provided
+        const checked_in_at = invitee.checked_in_at ?? null; // Default to null if not provided
+
 
         const query = `
             INSERT INTO invitees (id, event_id, user_id, status, qr_code, is_checked_in, checked_in_at, created_at)
@@ -43,10 +48,10 @@ export class PostgresInviteesRepository implements IInviteeRepository {
             id,
             invitee.event_id,
             invitee.user_id,
-            invitee.status,
-            invitee.qr_code,
-            invitee.is_checked_in ?? false,
-            invitee.checked_in_at ?? null,
+            status,
+            qr_code,
+            is_checked_in ?? false,
+            checked_in_at ?? null,
             created_at
         ];
 
@@ -73,5 +78,22 @@ export class PostgresInviteesRepository implements IInviteeRepository {
 
     async delete(id: string): Promise<void> {
         await queryWithLogging(this.pool, "DELETE FROM invitees WHERE id = $1", [id]);
+    }
+
+    async updateStatus(id: string, status: string): Promise<IInvitee> {
+        const query = `
+            UPDATE invitees
+            SET status = $1
+            WHERE id = $2
+            RETURNING *;
+        `;
+        const values = [status, id];
+        const { rows } = await this.pool.query(query, values);
+
+        if (rows.length === 0) {
+            throw Object.assign(new Error('Invitee not found'), { status: 404 });
+        }
+
+        return rows[0];
     }
 }

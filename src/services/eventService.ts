@@ -3,7 +3,7 @@ import {
     IEventRepository,
     IEventService,
     IEventCreate,
-    
+
 } from "../interfaces/eventInterface";
 
 export class EventService implements IEventService {
@@ -22,7 +22,7 @@ export class EventService implements IEventService {
         return event;
     }
 
-   
+
 
     async findAll(): Promise<IEvent[]> {
         const events = await this.eventRepository.findAll();
@@ -30,7 +30,7 @@ export class EventService implements IEventService {
     }
 
     // Update an existing event
-   
+
 
     // Delete an event
     async delete(id: string): Promise<void> {

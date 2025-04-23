@@ -45,3 +45,4 @@ coverage/
 # Build artifacts
 *.js  # Optional: if you only want to commit source TS files
 *.js.map
+serviceAccountKey.json

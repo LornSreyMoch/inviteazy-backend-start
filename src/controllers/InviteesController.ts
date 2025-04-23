@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { IInvitee, IInviteeWithoutId, IInviteeService } from "../interfaces/InviteesInterface";
+import {IInviteeWithoutId, IInviteeService } from "../interfaces/InviteesInterface";
 
 export class InviteesController {
     constructor(private inviteesService: IInviteeService) {}
@@ -25,8 +25,9 @@ export class InviteesController {
 
     async createInvitee(req: Request, res: Response, next: NextFunction) {
         try {
+            const { event_id } = req.params;
             const invitee: IInviteeWithoutId = req.body;
-            const newInvitee = await this.inviteesService.create(invitee);
+            const newInvitee = await this.inviteesService.create({ ...invitee, event_id });
             res.status(201).json({ message: "New invitee created", data: newInvitee });
         } catch (error) {
             next(error);
@@ -49,6 +50,18 @@ export class InviteesController {
             const { id } = req.params;
             await this.inviteesService.delete(id);
             res.status(200).json({ message: "Invitee deleted successfully" });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async updateInviteeStatus(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { inviteeId } = req.params;
+            const { status } = req.body;
+
+            const updatedInvitee = await this.inviteesService.updateStatus(inviteeId, status);
+            res.status(200).json({ message: 'Invitee status updated', data: updatedInvitee });
         } catch (error) {
             next(error);
         }
