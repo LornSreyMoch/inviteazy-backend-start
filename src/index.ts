@@ -46,9 +46,9 @@ const eventService = new EventService(eventRepository);
 const userController = new UserController(userService);
 const authController = new AuthController(userService);
 const inviteesController = new InviteesController(inviteeService);
-const guestInController= new GuestInsightController(inviteeService)
+// const guestInController= new GuestInsightController(inviteeService)
 
-const eventController= new EventController(eventService);
+const eventController= new EventController(eventService,inviteeService);
 
 // Middlewares
 app.use(express.json());
@@ -58,7 +58,7 @@ app.use(loggingMiddleware);
 app.use("/api/users", userRoutes(userController));
 app.use("/api/auth", authRoutes(authController));
 app.use("/api/v1", inviteesRoutes(inviteesController));
-app.use("/api/v1/events", guestRouter(guestInController));
+// app.use("/api/v1/event", guestRouter(guestInController));
 app.use("/api/v1/events", eventRouter(eventController));
 
 // Handle Errors

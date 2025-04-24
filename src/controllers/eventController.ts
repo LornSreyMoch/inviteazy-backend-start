@@ -1,20 +1,28 @@
 import { NextFunction, Request, Response } from "express";
 import { IEventService } from "../interfaces/eventInterface";
+import { IInviteeService, IInviteeWithoutId } from "../interfaces/InviteesInterface";
 import redisCache from "../services/cacheService"
+
 interface AuthenticatedRequest extends Request {
     user?: { id: string };
   }
 export class EventController {
     private eventService: IEventService;
+    private inviteeService: IInviteeService
 
-    constructor(eventService: IEventService) {
+
+    constructor(eventService: IEventService,inviteeService: IInviteeService) {
         this.eventService = eventService;
+        this.inviteeService=inviteeService
     }
     async getAllEvents(req: Request, res: Response, next: NextFunction) {
         try {
-            console.log(req.baseUrl, req.originalUrl);
-            const events = await this.eventService.findAll();
+            const {user_id} = req.params;
+            const events = await this.eventService.findAll(user_id);
+
             res.status(200).json({ status: "success", data: events });
+
+            // res.status(200).json({message: "Okay"})
         } catch (error) {
             console.log(error);
             res.status(500).json({ message: "Internal Server Error" });
@@ -79,9 +87,54 @@ export class EventController {
         }
     }
 
+    async getGuestInsights(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+          const event_id = req.params.event_id;
+          const insights = await this.inviteeService.findByEventId(event_id);
+    
+          const statusCounts = {
+            totalInvited: insights.length,
+            confirmed: 0,
+            attended: 0,
+            pending: 0,
+            totalContribution: 0
+          };
+    
+          for (const invitee of insights) {
+            switch (invitee.status) {
+              case "accept":
+                statusCounts.confirmed++;
+                break;
+              case "pending":
+                statusCounts.pending++;
+                break;
+              default:
+                statusCounts.pending++;
+            }
+    
+            if (invitee.is_checked_in) {
+              statusCounts.attended++;
+            }
+          }
+    
+           res.status(200).json({ data: statusCounts });
+    
+        } catch (error) {
+          console.error("Error fetching guest insights:", error);
+           res.status(500).json({ error: "Internal server error" });
+        }
+      }
 
+  async createInvitee(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { event_id } = req.params;
+            const invitee: IInviteeWithoutId = req.body;
+            const newInvitee = await this.inviteeService.create({ ...invitee, event_id });
+            res.status(201).json({ message: "New invitee created", data: newInvitee });
+        } catch (error) {
+            next(error);
+        }
+    }
 }
-export default EventController;  // Export the controller class as a default export
-
-
+export default EventController; 
 
