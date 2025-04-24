@@ -7,7 +7,7 @@
 //         try{
 //         const event_id = req.params.event_id;
 //         const insights = await this.inviteeService.findByEventId(event_id);
-        
+
 //         res.status(200).json({data:insights});
 
 //         }catch(error){
@@ -15,7 +15,7 @@
 //             res.status(500).json({ error: "Internal server error" });
 //             next(error);
 //         }
-        
+
 //     }
 
 // }
@@ -25,7 +25,7 @@ import { NextFunction, Request, Response } from "express";
 import { IInvitee, IInviteeService } from "../interfaces/InviteesInterface";
 
 export class GuestInsightController {
-  constructor(private inviteeService: IInviteeService) {}
+  constructor(private inviteeService: IInviteeService) { }
 
   async getGuestInsights(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -57,11 +57,11 @@ export class GuestInsightController {
         }
       }
 
-       res.status(200).json({ data: statusCounts });
+      res.status(200).json({ data: statusCounts });
 
     } catch (error) {
       console.error("Error fetching guest insights:", error);
-       res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({ error: "Internal server error" });
     }
   }
 }
