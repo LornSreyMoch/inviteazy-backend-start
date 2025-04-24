@@ -1,3 +1,4 @@
+import { string } from "joi";
 import {
     IEvent,
     IEventRepository,
@@ -24,8 +25,8 @@ export class EventService implements IEventService {
 
 
 
-    async findAll(): Promise<IEvent[]> {
-        const events = await this.eventRepository.findAll();
+    async findAll(user_id:string): Promise<IEvent[]> {
+        const events = await this.eventRepository.findAll(user_id);
         return events;
     }
 

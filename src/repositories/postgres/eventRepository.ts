@@ -66,8 +66,9 @@ export class PostgresEventRepository implements IEventRepository {
     try {
       const { rows } = await queryWithLogging(
         this.pool,
-        "SELECT * FROM events"
+        "SELECT * FROM events;"
       );
+      console.log("....",rows);
       return rows;
     } catch (error) {
       throw new Error("Failed to retrieve all events");
