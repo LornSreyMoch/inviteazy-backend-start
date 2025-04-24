@@ -40,8 +40,8 @@ export class PostgresUserRepository implements IUserRepository {
     const hashedPassword = await bcrypt.hash(user.password, 10);
     const { rows } = await queryWithLogging(
       this.pool,
-      "INSERT INTO users (name, email, password, role) VALUES ($1, $2, $3, $4) RETURNING id, name, email, role",
-      [user.name, user.email, hashedPassword, user.role]
+      "INSERT INTO users (name, email, password, role, phone_number, profile_picture, address) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, name, email, role, phone_number, profile_picture, address",
+      [user.name, user.email, hashedPassword, user.role, user.phone_number, user.profile_picture, user.address]
     );
     return rows[0];
   }
