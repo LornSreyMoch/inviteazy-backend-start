@@ -1,12 +1,24 @@
 import { NextFunction, Request, Response } from "express";
 import {IInviteeWithoutId, IInviteeService } from "../interfaces/InviteesInterface";
+import redisCache from "../services/cacheService"
 
 export class InviteesController {
     constructor(private inviteesService: IInviteeService) {}
 
     async getAllInvitees(req: Request, res: Response, next: NextFunction) {
         try {
+            const cacheKey = `data:${req.method}:${req.originalUrl}`;
+                        const cacheData = await redisCache.get(cacheKey);
+                        if (cacheData) {
+                            res.json({
+                                message: "Cache: Get all event by userId",
+                                data: JSON.parse(cacheData),
+                            });
+                            return;
+                        }
             const result = await this.inviteesService.findAll();
+            await redisCache.set(cacheKey, JSON.stringify(result), 360);
+            
             res.json({ message: "Get all invitees", data: result });
         } catch (error) {
             next(error);
@@ -15,8 +27,19 @@ export class InviteesController {
 
     async getInviteeById(req: Request, res: Response, next: NextFunction) {
         try {
+            const cacheKey = `data:${req.method}:${req.originalUrl}`;
+                        const cacheData = await redisCache.get(cacheKey);
+                        if (cacheData) {
+                            res.json({
+                                message: "Cache: Get all event by userId",
+                                data: JSON.parse(cacheData),
+                            });
+                            return;
+                        }
             const { id } = req.params;
             const result = await this.inviteesService.findById(id);
+            await redisCache.set(cacheKey, JSON.stringify(result), 360);
+
             res.json({ message: "Get invitee by Id", data: result });
         } catch (error) {
             next(error);

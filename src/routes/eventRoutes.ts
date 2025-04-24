@@ -7,7 +7,7 @@ export default function eventRouter(controller: EventController): Router {
     const router = Router();
     router.post("/create",authMiddleware,validateEvent,controller.createNewEvent.bind(controller))
     router.get("/all/:user_id", controller.getAllEvents.bind(controller))
-    router.get("events/:id", controller.getEventById.bind(controller))
+    router.get("/events/:id", controller.getEventById.bind(controller))
     router.post('/:event_id/invite', authMiddleware, controller.createInvitee.bind(controller), validateInvitee);
 
     router.put("/:id", controller.updateEvent.bind(controller))
