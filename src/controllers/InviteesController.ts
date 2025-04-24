@@ -23,16 +23,7 @@ export class InviteesController {
         }
     }
 
-    async createInvitee(req: Request, res: Response, next: NextFunction) {
-        try {
-            const { event_id } = req.params;
-            const invitee: IInviteeWithoutId = req.body;
-            const newInvitee = await this.inviteesService.create({ ...invitee, event_id });
-            res.status(201).json({ message: "New invitee created", data: newInvitee });
-        } catch (error) {
-            next(error);
-        }
-    }
+  
 
     async updateInvitee(req: Request, res: Response, next: NextFunction) {
         try {
