@@ -5,20 +5,32 @@ import redisCache from "../services/cacheService"
 
 interface AuthenticatedRequest extends Request {
     user?: { id: string };
-  }
+}
 export class EventController {
     private eventService: IEventService;
     private inviteeService: IInviteeService
 
 
-    constructor(eventService: IEventService,inviteeService: IInviteeService) {
+    constructor(eventService: IEventService, inviteeService: IInviteeService) {
         this.eventService = eventService;
-        this.inviteeService=inviteeService
+        this.inviteeService = inviteeService
     }
     async getAllEvents(req: Request, res: Response, next: NextFunction) {
         try {
-            const {user_id} = req.params;
+
+            const cacheKey = `data:${req.method}:${req.originalUrl}`;
+            const cacheData = await redisCache.get(cacheKey);
+            if (cacheData) {
+                res.json({
+                    message: "Cache: Get all event by userId",
+                    data: JSON.parse(cacheData),
+                });
+                return;
+            }
+            const { user_id } = req.params;
             const events = await this.eventService.findAll(user_id);
+            await redisCache.set(cacheKey, JSON.stringify(events), 360);
+
 
             res.status(200).json({ status: "success", data: events });
 
@@ -30,13 +42,13 @@ export class EventController {
         }
 
     }
-    async createNewEvent(req:AuthenticatedRequest, res: Response, next: NextFunction) {
+    async createNewEvent(req: AuthenticatedRequest, res: Response, next: NextFunction) {
         try {
             const user = req.user?.id;
-                console.log("don't have user",user)
-            
-            const {  name, description, datetime, location } = req.body;
-            const newEvent = await this.eventService.create({user_id:user , event_name: name, event_datetime: datetime, event_location: location, event_description: description });
+            console.log("don't have user", user)
+
+            const { name, description, datetime, location } = req.body;
+            const newEvent = await this.eventService.create({ user_id: user, event_name: name, event_datetime: datetime, event_location: location, event_description: description });
             res.status(201).json({ message: "Created new Event successfully", newEvent });
             return;
         } catch (error) {
@@ -47,8 +59,19 @@ export class EventController {
     }
     async getEventById(req: Request, res: Response, next: NextFunction) {
         try {
+
+            const cacheKey = `data:${req.method}:${req.originalUrl}`;
+            const cacheData = await redisCache.get(cacheKey);
+            if (cacheData) {
+                res.json({
+                    message: "Cache: Get event by Id",
+                    data: JSON.parse(cacheData),
+                });
+                return;
+            }
             const id = req.params.id;
             const event = await this.eventService.findById(id);
+             await redisCache.set(cacheKey, JSON.stringify(event), 360);
             if (!event) {
                 res.status(404).json({ message: "Event not found" });
                 return;
@@ -89,43 +112,43 @@ export class EventController {
 
     async getGuestInsights(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-          const event_id = req.params.event_id;
-          const insights = await this.inviteeService.findByEventId(event_id);
-    
-          const statusCounts = {
-            totalInvited: insights.length,
-            confirmed: 0,
-            attended: 0,
-            pending: 0,
-            totalContribution: 0
-          };
-    
-          for (const invitee of insights) {
-            switch (invitee.status) {
-              case "accept":
-                statusCounts.confirmed++;
-                break;
-              case "pending":
-                statusCounts.pending++;
-                break;
-              default:
-                statusCounts.pending++;
-            }
-    
-            if (invitee.is_checked_in) {
-              statusCounts.attended++;
-            }
-          }
-    
-           res.status(200).json({ data: statusCounts });
-    
-        } catch (error) {
-          console.error("Error fetching guest insights:", error);
-           res.status(500).json({ error: "Internal server error" });
-        }
-      }
+            const event_id = req.params.event_id;
+            const insights = await this.inviteeService.findByEventId(event_id);
 
-  async createInvitee(req: Request, res: Response, next: NextFunction) {
+            const statusCounts = {
+                totalInvited: insights.length,
+                confirmed: 0,
+                attended: 0,
+                pending: 0,
+                totalContribution: 0
+            };
+
+            for (const invitee of insights) {
+                switch (invitee.status) {
+                    case "accept":
+                        statusCounts.confirmed++;
+                        break;
+                    case "pending":
+                        statusCounts.pending++;
+                        break;
+                    default:
+                        statusCounts.pending++;
+                }
+
+                if (invitee.is_checked_in) {
+                    statusCounts.attended++;
+                }
+            }
+
+            res.status(200).json({ data: statusCounts });
+
+        } catch (error) {
+            console.error("Error fetching guest insights:", error);
+            res.status(500).json({ error: "Internal server error" });
+        }
+    }
+
+    async createInvitee(req: Request, res: Response, next: NextFunction) {
         try {
             const { event_id } = req.params;
             const invitee: IInviteeWithoutId = req.body;
@@ -136,5 +159,5 @@ export class EventController {
         }
     }
 }
-export default EventController; 
+export default EventController;
 
