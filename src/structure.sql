@@ -15,11 +15,11 @@ INSERT INTO public.invitees(
 
 CREATE TABLE IF NOT EXISTS events (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id SERIAL NOT NULL REFERENCES users(id),
+    user_id UUID NOT NULL REFERENCES users(id),
     event_name VARCHAR(255) NOT NULL,
     event_datetime TIMESTAMP NOT NULL,
-    location TEXT NOT NULL,
-    description TEXT,
+    event_location TEXT NOT NULL,
+    event_description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -40,7 +40,47 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,
     phone_number VARCHAR(20),
     profile_picture TEXT,
-    address TEXT
+    address TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+-- In maraiDB to Create TABLE
+
+CREATE TABLE users (
+    id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    role VARCHAR(50) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(20),
+    profile_picture TEXT,
+    address TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS events (
+    id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+    user_id CHAR(36) NOT NULL,
+    event_name VARCHAR(255) NOT NULL,
+    event_datetime TIMESTAMP NOT NULL,
+    event_location TEXT NOT NULL,
+    event_description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS invitees (
+    id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+    event_id CHAR(36) NOT NULL,
+    user_id CHAR(36) NOT NULL,
+    status VARCHAR(50),
+    qr_code TEXT,
+    is_checked_in BOOLEAN DEFAULT FALSE,
+    checked_in_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (event_id) REFERENCES events(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
 );
