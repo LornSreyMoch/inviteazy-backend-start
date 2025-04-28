@@ -1,17 +1,38 @@
 version: "3.9"
 services:
-  mariadb:
-    image: mariadb:10
-    container_name: mariadb-container
-    environment:
-      MARIADB_ROOT_PASSWORD: 12345678 
-      MARIADB_DATABASE: inviteazy
-      MARIADB_USER: laiheang
-      MARIADB_PASSWORD: 12345678
+  app:
+    build: .
     ports:
-      - "3307:3306"
-    volumes:
-      - mariadb_data:/var/lib/mysql
+      - "4011:3000"
+    environment:
+      - JWT_SECRET=${JWT_SECRET}
+      - PORT=${DB_PORT}
+      - NODE_ENV=${NODE_ENV}
+      - POSTGRES_HOST=${DB_HOST}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - REDIS_URL=${REDIS_URL}
+      # - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD} 
+      - MARIADB_DATABASE=${MARIADB_DATABASE}
+      - MARIADB_USER=${MARIADB_USER}
+      - MARIADB_PASSWORD=${MARIADB_PASSWORD}
 
-volumes:
-  mariadb_data:
+
+
+
+#   mariadb:
+#     image: mariadb:10
+#     container_name: mariadb-container
+#     environment:
+#       MARIADB_ROOT_PASSWORD: 12345678 
+#       MARIADB_DATABASE: inviteazy
+#       MARIADB_USER: laiheang
+#       MARIADB_PASSWORD: 12345678
+#     ports:
+#       - "3307:3306"
+#     volumes:
+#       - mariadb_data:/var/lib/mysql
+
+# volumes:
+#   mariadb_data:
