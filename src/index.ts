@@ -10,7 +10,7 @@ import authRoutes from "./routes/authRoutes";
 // import { connectPostgresDb } from "./config/postgresdb/db";
 import { PostgresUserRepository } from "./repositories/postgres/userRepository";
 import { InviteeService } from "./services/InviteesService";
-import { PostgresInviteesRepository } from "./repositories/postgres/InviteesRepository";
+// import { PostgresInviteesRepository } from "./repositories/postgres/InviteesRepository";
 import { loggingMiddleware } from "./middlewares/loggingMiddleware";
 import inviteesRoutes from "./routes/InviteesRoutes";
 import eventRouter from "./routes/eventRoutes";

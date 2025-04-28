@@ -5,7 +5,7 @@ import { IEventRepository } from "../interfaces/eventInterface";
 
 import { connectPostgresDb } from "../config/postgresdb/db";
 import { connectMongoDB } from "../config/mongodb/db";
-import mariadb from "../config/mariadb/db";
+import { connectMariaDB } from "../config/mariadb/db";
 
 import { PostgresUserRepository } from "../repositories/postgres/userRepository";
 import { PostgresInviteesRepository } from "../repositories/postgres/InviteesRepository";
@@ -34,13 +34,15 @@ export async function createRepositories(dbType: string):Promise< {
         eventRepository: new PostgresEventRepository(pgPool),
       };
     case "mariadb":
+     const mariadb= connectMariaDB;
       return {
         userRepository: new MariaDbUserRepository(mariadb),
         inviteesRepository: new MariaDBInviteesRepository(mariadb),
         eventRepository: new MariaDbEventRepository(mariadb),
       };
     case "mongodb":
-        await connectMongoDB();       return {
+        await connectMongoDB();       
+        return {
         userRepository: new MongoUserRepository(),
         inviteesRepository: {} as any, 
         eventRepository: new MongoEventRepository(eventModel),

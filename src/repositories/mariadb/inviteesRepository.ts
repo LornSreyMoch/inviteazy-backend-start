@@ -83,7 +83,7 @@ export class MariaDBInviteesRepository implements IInviteeRepository {
         const query = `UPDATE invitees SET ${updates.join(', ')} WHERE id = ?`;
         await queryWithLogging(this.pool,query, values);
 
-        return this.findById(id); // Return the updated row
+        return this.findById(id); 
     }
 
     async delete(id: string): Promise<void> {
