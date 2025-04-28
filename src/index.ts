@@ -21,7 +21,8 @@ import { MongoUserRepository } from "./repositories/mongodb/userRepository";
 import { connectMongoDB } from "./config/mongodb/db";
 import guestRouter from "./routes/guestInRoutes"
 import { GuestInsightController } from "./controllers/guestInsightController";
-
+import { db } from "./config/firebase/db";
+import inviteFireRoutes from "./routes/Invite-fire-route";
 
 dotenv.config();
 
@@ -54,12 +55,15 @@ const eventController= new EventController(eventService,inviteeService);
 app.use(express.json());
 app.use(loggingMiddleware);
 
-// Routes
+// Routes PostgresSQL
 app.use("/api/users", userRoutes(userController));
-app.use("/api/auth", authRoutes(authController));
-app.use("/api/v1", inviteesRoutes(inviteesController));
+// app.use("/api/auth", authRoutes(authController));
+// app.use("/api/v1", inviteesRoutes(inviteesController));
 // app.use("/api/v1/event", guestRouter(guestInController));
-app.use("/api/v1/events", eventRouter(eventController));
+// app.use("/api/v1/events", eventRouter(eventController));
+
+// Firestore
+app.use("/api/v1", inviteFireRoutes());
 
 // Handle Errors
 app.use(errorMiddleware);
