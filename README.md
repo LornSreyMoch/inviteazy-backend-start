@@ -113,3 +113,7 @@ docker run -d \
 ```bash
   docker exec -it mariadb-container mariadb -u root -p
 ```
+<!-- start container  -->
+```bash
+docker-compose up -d
+```

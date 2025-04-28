@@ -1,23 +1,21 @@
-
-import { Pool, QueryResult } from "pg";
+import { Pool } from "mysql2/promise";
 import { IEvent, IEventRepository } from "../../interfaces/eventInterface";
-import { queryWithLogging } from "./utils";
+import { queryWithLogging } from "./utils"; 
 
-export class PostgresEventRepository implements IEventRepository {
+export class MariaDbEventRepository implements IEventRepository {
   private pool: Pool;
-  
+
   constructor(pool: Pool) {
     this.pool = pool;
   }
 
   async findAll(): Promise<IEvent[]> {
     try {
-      const { rows } = await queryWithLogging(
+      const [rows] = await queryWithLogging<IEvent[]>(
         this.pool,
         "SELECT * FROM events;"
       );
-      console.log("....",rows);
-      return rows;
+      return rows; // rows will be of type IEvent[]
     } catch (error) {
       throw new Error("Failed to retrieve all events");
     }
@@ -25,13 +23,19 @@ export class PostgresEventRepository implements IEventRepository {
 
   async create(event: IEvent): Promise<IEvent> {
     try {
-      const { rows } = await queryWithLogging(
+      const [rows] = await queryWithLogging<IEvent[]>(
         this.pool,
         `INSERT INTO events (user_id, event_name, event_datetime, event_location, event_description)
-         VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+         VALUES (?, ?, ?, ?, ?)`,
         [event.user_id, event.event_name, event.event_datetime, event.event_location, event.event_description]
       );
-      return rows[0];
+
+      const [result] = await queryWithLogging<IEvent[]>(
+        this.pool,
+        `SELECT * FROM events WHERE id = LAST_INSERT_ID()`
+      );
+
+      return result[0]; // result[0] is of type IEvent
     } catch (error) {
       throw new Error("Failed to create event");
     }
@@ -39,7 +43,7 @@ export class PostgresEventRepository implements IEventRepository {
 
   async delete(id: string): Promise<void> {
     try {
-      await queryWithLogging(this.pool, "DELETE FROM events WHERE id = $1", [id]);
+      await queryWithLogging(this.pool, "DELETE FROM events WHERE id = ?", [id]);
     } catch (error) {
       throw new Error(`Failed to delete event with ID ${id}`);
     }
@@ -47,10 +51,10 @@ export class PostgresEventRepository implements IEventRepository {
 
   async update(id: string, event: IEvent): Promise<IEvent> {
     try {
-      const { rows } = await queryWithLogging(
+      await queryWithLogging(
         this.pool,
-        `UPDATE events SET user_id = $1, event_name = $2, event_datetime = $3, 
-         event_location = $4, event_description = $5 WHERE id = $6 RETURNING *`,
+        `UPDATE events SET user_id = ?, event_name = ?, event_datetime = ?, 
+         event_location = ?, event_description = ? WHERE id = ?`,
         [
           event.user_id,
           event.event_name,
@@ -60,7 +64,13 @@ export class PostgresEventRepository implements IEventRepository {
           id,
         ]
       );
-      return rows[0];
+
+      const [rows] = await queryWithLogging<IEvent[]>(
+        this.pool,
+        "SELECT * FROM events WHERE id = ?",
+        [id]
+      );
+      return rows[0]; // rows[0] is of type IEvent
     } catch (error) {
       throw new Error(`Failed to update event with ID ${id}`);
     }
@@ -68,12 +78,12 @@ export class PostgresEventRepository implements IEventRepository {
 
   async findById(id: string): Promise<IEvent | null> {
     try {
-      const { rows } = await queryWithLogging(
+      const [rows] = await queryWithLogging<IEvent[]>(
         this.pool,
-        "SELECT id, user_id, event_name, event_datetime, event_location, event_description FROM events WHERE id = $1",
+        "SELECT * FROM events WHERE id = ?",
         [id]
       );
-      return rows[0] || null;
+      return rows[0] || null; // rows[0] is of type IEvent
     } catch (error) {
       throw new Error(`Failed to find event with ID ${id}`);
     }
