@@ -12,16 +12,19 @@ import { PostgresInviteesRepository } from "../repositories/postgres/InviteesRep
 import { PostgresEventRepository } from "../repositories/postgres/eventRepository";
 
 import { MongoUserRepository } from "../repositories/mongodb/userRepository";
+import { MongoEventRepository } from "../repositories/mongodb/eventRepository";
 
 import { MariaDbUserRepository } from "../repositories/mariadb/userRepository";
 import { MariaDBInviteesRepository } from "../repositories/mariadb/inviteesRepository";
 import { MariaDbEventRepository } from "../repositories/mariadb/eventRepository";
+import { eventModel } from "../models/eventModel";
 
-export function createRepositories(dbType: string): {
+
+export async function createRepositories(dbType: string):Promise< {
   userRepository: IUserRepository;
   inviteesRepository: IInviteeRepository;
   eventRepository: IEventRepository;
-} {
+}> {
   switch (dbType) {
     case "postgres":
       const pgPool = connectPostgresDb();
@@ -37,11 +40,10 @@ export function createRepositories(dbType: string): {
         eventRepository: new MariaDbEventRepository(mariadb),
       };
     case "mongodb":
-      const mongo = connectMongoDB(); // optional usage
-      return {
+        await connectMongoDB();       return {
         userRepository: new MongoUserRepository(),
         inviteesRepository: {} as any, 
-        eventRepository: {} as any,
+        eventRepository: new MongoEventRepository(eventModel),
       };
     default:
       throw new Error("Unsupported DB_TYPE");

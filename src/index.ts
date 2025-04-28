@@ -7,7 +7,7 @@ import { UserController } from "./controllers/userController";
 import { AuthController } from "./controllers/authController";
 import { InviteesController } from "./controllers/InviteesController";
 import authRoutes from "./routes/authRoutes";
-import { connectPostgresDb } from "./config/postgresdb/db";
+// import { connectPostgresDb } from "./config/postgresdb/db";
 import { PostgresUserRepository } from "./repositories/postgres/userRepository";
 import { InviteeService } from "./services/InviteesService";
 import { PostgresInviteesRepository } from "./repositories/postgres/InviteesRepository";
@@ -91,32 +91,40 @@ const app = express();
 const port = 3000;
 
 const dbType = process.env.DB_TYPE || "mariadb";
+
+async function initRepositories() {
 const {
   userRepository,
   inviteesRepository,
   eventRepository,
-} = createRepositories(dbType);
-
+} =await createRepositories(dbType);
 // Services
+
 const userService = new UserService(userRepository);
 const inviteeService = new InviteeService(inviteesRepository);
-const eventService = new EventService(eventRepository);
-
 // Controllers
+
+const eventService = new EventService(eventRepository);
 const userController = new UserController(userService);
 const authController = new AuthController(userService);
 const inviteesController = new InviteesController(inviteeService);
 const eventController = new EventController(eventService, inviteeService);
 
-// Middlewares
-app.use(express.json());
-app.use(loggingMiddleware);
-
-// Routes
+// / Routes
 app.use("/api/users", userRoutes(userController));
 app.use("/api/auth", authRoutes(authController));
 app.use("/api/v1", inviteesRoutes(inviteesController));
 app.use("/api/v1/events", eventRouter(eventController));
+}initRepositories();
+
+
+
+
+
+// Middlewares
+app.use(express.json());
+app.use(loggingMiddleware);
+
 
 // Handle Errors
 app.use(errorMiddleware);
