@@ -16,6 +16,13 @@ import inviteesRoutes from "./routes/InviteesRoutes";
 import eventRouter from "./routes/eventRoutes";
 import { EventController } from "./controllers/eventController";
 import { EventService } from "./services/eventService";
+import { PostgresEventRepository } from "./repositories/postgres/eventRepository";
+import { MongoUserRepository } from "./repositories/mongodb/userRepository";
+import { connectMongoDB } from "./config/mongodb/db";
+import guestRouter from "./routes/guestInRoutes"
+import { GuestInsightController } from "./controllers/guestInsightController";
+import { db } from "./config/firebase/db";
+import inviteFireRoutes from "./routes/Invite-fire-route";
 import { createRepositories } from "./factories/repositoryFactory";
 
 // import { PostgresEventRepository } from "./repositories/postgres/eventRepository";
@@ -125,6 +132,15 @@ app.use("/api/v1/events", eventRouter(eventController));
 app.use(express.json());
 app.use(loggingMiddleware);
 
+// Routes PostgresSQL
+app.use("/api/users", userRoutes(userController));
+// app.use("/api/auth", authRoutes(authController));
+// app.use("/api/v1", inviteesRoutes(inviteesController));
+// app.use("/api/v1/event", guestRouter(guestInController));
+// app.use("/api/v1/events", eventRouter(eventController));
+
+// Firestore
+app.use("/api/v1", inviteFireRoutes());
 
 // Handle Errors
 app.use(errorMiddleware);
