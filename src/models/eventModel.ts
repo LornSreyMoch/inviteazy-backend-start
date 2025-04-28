@@ -1,8 +1,8 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document ,ObjectId} from "mongoose";
 
 
 export interface IEvent extends Document{
-    id?: number;
+    id?:ObjectId;
     user_id:string;
     event_name: string;
     event_datetime: string;

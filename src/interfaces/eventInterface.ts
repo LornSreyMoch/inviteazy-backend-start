@@ -1,5 +1,6 @@
+import { Document, Types } from "mongoose";
 export interface IEvent{
-    id?: string;
+    _id?:Types.ObjectId;
     user_id?:string;
     event_name: string;
     event_datetime: string;
