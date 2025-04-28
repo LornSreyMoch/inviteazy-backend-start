@@ -25,73 +25,6 @@ import { db } from "./config/firebase/db";
 import inviteFireRoutes from "./routes/Invite-fire-route";
 import { createRepositories } from "./factories/repositoryFactory";
 
-// import { PostgresEventRepository } from "./repositories/postgres/eventRepository";
-// import { MongoUserRepository } from "./repositories/mongodb/userRepository";
-// import { connectMongoDB } from "./config/mongodb/db";
-// import guestRouter from "./routes/guestInRoutes"
-// import { GuestInsightController } from "./controllers/guestInsightController";
-// import connection from "./config/mariadb/db";
-// import { MariaDbEventRepository } from "./repositories/mariadb/eventRepository";
-// import { MariaDbUserRepository } from "./repositories/mariadb/userRepository";
-// import { MariaDBInviteesRepository } from "./repositories/mariadb/inviteesRepository";
-
-// dotenv.config();
-
-// const app = express();
-// const port = 3000;
-
-// // Connect to PostgreSQL
-// const pgPool = connectPostgresDb();
-
-
-// // Connect to mariaDB
-// const mrPool=connection;
-// // Repositories postgres
-// // const userRepository = new PostgresUserRepository(pgPool);
-// // const inviteesRepository = new PostgresInviteesRepository(pgPool);
-// // const eventRepository = new PostgresEventRepository(pgPool);
-
-// // Repository MaraiDB
-// const userRepository= new MariaDbUserRepository(mrPool)
-// const inviteesRepository=new MariaDBInviteesRepository(mrPool)
-// const eventRepository = new MariaDbEventRepository(mrPool);
-
-
-
-
-
-// // Services
-// const userService = new UserService(userRepository);
-// const inviteeService = new InviteeService(inviteesRepository);
-// const eventService = new EventService(eventRepository);
-
-
-// // Controllers
-// const userController = new UserController(userService);
-// const authController = new AuthController(userService);
-// const inviteesController = new InviteesController(inviteeService);
-// // const guestInController= new GuestInsightController(inviteeService)
-
-// const eventController= new EventController(eventService,inviteeService);
-
-// // Middlewares
-// app.use(express.json());
-// app.use(loggingMiddleware);
-
-// // Routes
-// app.use("/api/users", userRoutes(userController));
-// app.use("/api/auth", authRoutes(authController));
-// app.use("/api/v1", inviteesRoutes(inviteesController));
-// // app.use("/api/v1/event", guestRouter(guestInController));
-// app.use("/api/v1/events", eventRouter(eventController));
-
-// // Handle Errors
-// app.use(errorMiddleware);
-
-// app.listen(port, () => {
-//   console.log(`Server running at http://localhost:${port}`);
-// });
-
 dotenv.config();
 
 const app = express();
@@ -131,16 +64,8 @@ app.use("/api/v1/events", eventRouter(eventController));
 // Middlewares
 app.use(express.json());
 app.use(loggingMiddleware);
-
-// Routes PostgresSQL
-app.use("/api/users", userRoutes(userController));
-// app.use("/api/auth", authRoutes(authController));
-// app.use("/api/v1", inviteesRoutes(inviteesController));
-// app.use("/api/v1/event", guestRouter(guestInController));
-// app.use("/api/v1/events", eventRouter(eventController));
-
 // Firestore
-app.use("/api/v1", inviteFireRoutes());
+// app.use("/api/v1", inviteFireRoutes());
 
 // Handle Errors
 app.use(errorMiddleware);

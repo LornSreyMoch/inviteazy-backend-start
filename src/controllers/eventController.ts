@@ -1,28 +1,23 @@
+
 import { NextFunction, Request, Response } from "express";
 import { IEventService } from "../interfaces/eventInterface";
 import { IInviteeService, IInviteeWithoutId } from "../interfaces/InviteesInterface";
+import redisCache from "../services/cacheService"
 
 interface AuthenticatedRequest extends Request {
     user?: { id: string };
 }
-
 export class EventController {
     private eventService: IEventService;
-    private inviteeService: IInviteeService;
+    private inviteeService: IInviteeService
+
 
     constructor(eventService: IEventService, inviteeService: IInviteeService) {
         this.eventService = eventService;
-
-        this.inviteeService = inviteeService;
-
         this.inviteeService = inviteeService
     }
-
     async getAllEvents(req: Request, res: Response, next: NextFunction) {
         try {
-            const { user_id } = req.params;
-            const events = await this.eventService.findAll(user_id);
-
 
             const cacheKey = `data:${req.method}:${req.originalUrl}`;
             const cacheData = await redisCache.get(cacheKey);
@@ -39,30 +34,15 @@ export class EventController {
 
 
             res.status(200).json({ status: "success", data: events });
+
+            // res.status(200).json({message: "Okay"})
         } catch (error) {
-            console.error("Error fetching events:", error);
+            console.log(error);
+            res.status(500).json({ message: "Internal Server Error" });
             next(error);
         }
+
     }
-
-    async createNewEvent(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-        try {
-            const user = req.user?.id;
-            if (!user) {
-                res.status(400).json({ message: "User ID is required" });
-                return;
-            }
-
-            const { name, description, datetime, location } = req.body;
-            const newEvent = await this.eventService.create({
-                user_id: user,
-                event_name: name,
-                event_datetime: datetime,
-                event_location: location,
-                event_description: description,
-            });
-            res.status(201).json({ message: "Created new Event successfully", data: newEvent });
-
     async createNewEvent(req: AuthenticatedRequest, res: Response, next: NextFunction) {
         try {
             const user = req.user?.id;
@@ -73,14 +53,13 @@ export class EventController {
             res.status(201).json({ message: "Created new Event successfully", newEvent });
             return;
         } catch (error) {
-            console.error("Error creating event:", error);
+            console.log(error);
+            res.status(500).json({ message: "Internal Server Error" });
             next(error);
         }
     }
-
     async getEventById(req: Request, res: Response, next: NextFunction) {
         try {
-            const { id } = req.params;
 
             const cacheKey = `data:${req.method}:${req.originalUrl}`;
             const cacheData = await redisCache.get(cacheKey);
@@ -100,44 +79,40 @@ export class EventController {
             }
             res.status(200).json({ status: "success", data: event });
         } catch (error) {
-            console.error("Error fetching event by ID:", error);
+            console.log(error);
+            res.status(500).json({ message: "Internal Server Error" });
             next(error);
         }
-    }
 
+    }
     async updateEvent(req: Request, res: Response, next: NextFunction) {
         try {
-            const { id } = req.params;
+            const id = req.params.id;
             const { user, name, description, datetime, location } = req.body;
-            const updatedEvent = await this.eventService.update(id, {
-                user_id: user,
-                event_name: name,
-                event_datetime: datetime,
-                event_location: location,
-                event_description: description,
-            });
-            res.status(200).json({ message: "Updated Event successfully", data: updatedEvent });
+            const updatedEvent = await this.eventService.update(id, { user_id: user, event_name: name, event_datetime: datetime, event_location: location, event_description: description });
+            res.status(200).json({ message: "Updated Event successfully", updatedEvent });
+            return;
         } catch (error) {
-            console.error("Error updating event:", error);
+            console.log(error);
+            res.status(500).json({ message: "Internal Server Error" });
             next(error);
         }
     }
-
     async deleteEvent(req: Request, res: Response, next: NextFunction) {
         try {
-            const { id } = req.params;
+            const id = req.params.id;
             await this.eventService.delete(id);
             res.status(200).json({ message: "Event deleted successfully" });
+            return;
         } catch (error) {
-            console.error("Error deleting event:", error);
+            console.log(error);
+            res.status(500).json({ message: "Internal Server Error" });
             next(error);
         }
     }
 
     async getGuestInsights(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { event_id } = req.params;
-
             const event_id = req.params.event_id;
             const insights = await this.inviteeService.findByEventId(event_id);
 
@@ -146,7 +121,6 @@ export class EventController {
                 confirmed: 0,
                 attended: 0,
                 pending: 0,
-                totalContribution: 0,
                 totalContribution: 0
             };
 
@@ -168,9 +142,6 @@ export class EventController {
             }
 
             res.status(200).json({ data: statusCounts });
-        } catch (error) {
-            console.error("Error fetching guest insights:", error);
-            next(error);
 
         } catch (error) {
             console.error("Error fetching guest insights:", error);
@@ -185,7 +156,6 @@ export class EventController {
             const newInvitee = await this.inviteeService.create({ ...invitee, event_id });
             res.status(201).json({ message: "New invitee created", data: newInvitee });
         } catch (error) {
-            console.error("Error creating invitee:", error);
             next(error);
         }
     }

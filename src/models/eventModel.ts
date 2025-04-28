@@ -2,14 +2,14 @@ import mongoose, { Schema, Document ,ObjectId} from "mongoose";
 
 
 export interface IEvent extends Document{
-    id?:ObjectId;
+    id?:ObjectId | string;
     user_id:string;
     event_name: string;
     event_datetime: string;
     event_location: string;
     event_description: string;
-    created_at?:Date;
-    updated_at?:Date;
+    createdAt?:Date;
+    updatedAt?:Date;
 
 }
 
@@ -20,8 +20,7 @@ const eventSchema:Schema=new Schema(
         event_datetime: {type:String,required:true},
         event_location: {type:String,required:true},
         event_description: {type:String,required:true},
-        created_at: {type:Date,default:Date.now},
-        updated_at: {type:Date,default:Date.now}
+    
         },
         {
             timestamps: true,
