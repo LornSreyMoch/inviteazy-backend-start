@@ -20,6 +20,12 @@ import { MariaDbEventRepository } from "../repositories/mariadb/eventRepository"
 import { eventModel } from "../models/eventModel";
 
 
+import { FirebaseEventRepository } from "../repositories/firestore/eventRepository";
+import { FirebaseUserRepository } from "../repositories/firestore/userRepository";
+import { FirebaseInviteesRepository } from "../repositories/firestore/inviteesRepository";
+import { db } from "../config/firebase/db";  // Firebase DB setup
+
+
 export async function createRepositories(dbType: string):Promise< {
   userRepository: IUserRepository;
   inviteesRepository: IInviteeRepository;
@@ -46,6 +52,12 @@ export async function createRepositories(dbType: string):Promise< {
         userRepository: new MongoUserRepository(),
         inviteesRepository: {} as any, 
         eventRepository: new MongoEventRepository(eventModel),
+      };
+    case "firebase":
+      return {
+        userRepository: new FirebaseUserRepository(),
+        inviteesRepository: new FirebaseInviteesRepository(),
+        eventRepository: new FirebaseEventRepository(),
       };
     default:
       throw new Error("Unsupported DB_TYPE");
