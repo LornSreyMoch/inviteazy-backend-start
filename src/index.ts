@@ -19,6 +19,7 @@ import eventRouter from "./routes/eventRoutes"
 import {EventController} from "./controllers/eventController";
 import { EventService } from "./services/eventService";
 import { PostgresEventRepository } from "./repositories/postgres/eventRepository";
+import { MongoEventRepository } from "./repositories/mongodb/eventRepository";
 
 dotenv.config();
 
@@ -32,16 +33,17 @@ connectMongoDB();
 // Repositories
 const userRepository = new MongoUserRepository();
 // const userRepository = new PostgresUserRepository(pgPool);
-// const inviteesRepository = new PostgresInviteesRepository(pgPool);
+// const inviteesRepository = new PostgresInviteesRepositeventRepositoryory(pgPool);
+// const eventRepository = new MongoEventRepository();
+const eventRepository = new MongoEventRepository();
+
+
 
 // Services
 const userService = new UserService(userRepository);
 // const inviteeService = new InviteeService(inviteesRepository);
-
-// const eventRepository = new PostgresEventRepository(pgPool);
-
-// Services
 // const eventService = new EventService(eventRepository);
+
 
 // Controllers
 const userController = new UserController(userService);
