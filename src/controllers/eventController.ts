@@ -130,7 +130,7 @@ export class EventController {
                         statusCounts.confirmed++;
                         break;
                     case "pending":
-                        statusCounts.pending++;
+                        statusCounts    .pending++;
                         break;
                     default:
                         statusCounts.pending++;

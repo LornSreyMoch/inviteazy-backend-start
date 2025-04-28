@@ -10,7 +10,7 @@ import authRoutes from "./routes/authRoutes";
 // import { connectPostgresDb } from "./config/postgresdb/db";
 import { PostgresUserRepository } from "./repositories/postgres/userRepository";
 import { InviteeService } from "./services/InviteesService";
-import { PostgresInviteesRepository } from "./repositories/postgres/InviteesRepository";
+// import { PostgresInviteesRepository } from "./repositories/postgres/InviteesRepository";
 import { loggingMiddleware } from "./middlewares/loggingMiddleware";
 import inviteesRoutes from "./routes/InviteesRoutes";
 import eventRouter from "./routes/eventRoutes";
@@ -24,6 +24,7 @@ import { GuestInsightController } from "./controllers/guestInsightController";
 import { db } from "./config/firebase/db";
 import inviteFireRoutes from "./routes/Invite-fire-route";
 import { createRepositories } from "./factories/repositoryFactory";
+
 
 dotenv.config();
 
@@ -64,8 +65,7 @@ app.use("/api/v1/events", eventRouter(eventController));
 // Middlewares
 app.use(express.json());
 app.use(loggingMiddleware);
-// Firestore
-// app.use("/api/v1", inviteFireRoutes());
+
 
 // Handle Errors
 app.use(errorMiddleware);

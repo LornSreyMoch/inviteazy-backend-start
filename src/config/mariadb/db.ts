@@ -3,7 +3,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const connection = mysql.createPool({
+
+export const connectMariaDB = mysql.createPool({
   host: process.env.DB_HOST || "localhost",
   user: process.env.MARIADB_USER || "root",
   password: process.env.DB_PASSWORD || "12345678",
@@ -14,4 +15,4 @@ const connection = mysql.createPool({
   queueLimit: 0,
 });
 
-export default connection;
+
