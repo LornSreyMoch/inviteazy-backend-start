@@ -6,7 +6,7 @@ services:
       - "4011:3000"
     environment:
       - JWT_SECRET=${JWT_SECRET}
-      - PORT=${MDB_PORT}
+      - PORT=${PORT}
       - NODE_ENV=${NODE_ENV}
       - POSTGRES_HOST=${DB_HOST}
       - POSTGRES_USER=${DB_USER}
